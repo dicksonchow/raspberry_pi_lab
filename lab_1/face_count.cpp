@@ -17,50 +17,6 @@
 
 using namespace cv;
 using namespace std;
-using namespace mysqlpp;
-
-StoreQueryResult execute_select_query(string SELECT_STRING)
-{
-	try {
-                Connection conn(false);
-                conn.connect("secamadm", "localhost", "secamadm", "p@ssw0rd");
-                Query query = conn.query();
-
-                query << SELECT_STRING; 
-                return query.store();
-        }
-        catch (BadQuery e){
-                cerr << "Error: " << e.what() << endl;
-                exit(1);
-        }
-        catch (const BadConversion& e){
-                cerr << "Conversion error: " << e.what() << endl <<
-                        "\tretrieved data size: " << e.retrieved <<
-                        ", actual size: " << e.actual_size << endl;
-                exit(1);
-        }
-        catch (const mysqlpp::Exception& e){
-                cerr << "Error: " << e.what() << endl;
-                exit(1);
-        }
-}
-
-void get_labels_and_images(vector<Mat>& images, vector<int>& labels)
-{
-	StoreQueryResult results = execute_select_query("SELECT user.id, data.pic_path FROM secamuser_tb user INNER JOIN secamdata_tb data ON user.id = data.user_id ORDER BY user.id;");
-
-	for (size_t i = 0; i < results.num_rows(); i++){
-		images.push_back(imread(results[i]["pic_path"].c_str(), 0));
-		labels.push_back(atoi(results[i]["id"].c_str()));
-	}
-}
-
-User get_user_by_id(int id)
-{
-	StoreQueryResult result = execute_select_query("SELECT id, name, register FROM secamuser_tb WHERE id = " + to_string(id) + ";");
-	User user(atoi(result[0]["id"].c_str()), result[0]["name"].c_str(), !!atoi(result[0]["register"].c_str()));
-	return user;
-}
 
 void cleanup(int sig)
 {
@@ -91,17 +47,7 @@ int main(int argc, const char *argv[]) {
 	// These vectors hold the images and corresponding labels:
 	vector<Mat> images;
 	vector<int> labels;
-	// Read in the data (fails if no valid input filename is given, but you'll get an error message):
-	get_labels_and_images(images, labels);
-	
-	int im_width = images[0].cols;
-	int im_height = images[0].rows;
-	cout << "Welcome to face recognition program\nStart training..." << endl;
-	// Create a FaceRecognizer and train it on the given images:
-	//Ptr<FaceRecognizer> model = createFisherFaceRecognizer();
-	//model->train(images, labels);
 
-	cout << "Finishing training and start recognition" << endl;
 	CascadeClassifier haar_cascade;
 	haar_cascade.load(fn_haar);
 	// Get a handle to the Video device:
