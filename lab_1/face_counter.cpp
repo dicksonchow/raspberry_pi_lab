@@ -1,4 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <iostream>
+#include <sys/wait.h>
 #include "opencv2/core/core.hpp"
 #include "opencv2/contrib/contrib.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -7,6 +11,29 @@
 
 using namespace std;
 using namespace cv;
+
+void tell_num_of_people(int counter)
+{
+	char str[80];
+	int pid_status = 0;
+
+	pid_t pid = fork();
+
+	if (pid == -1){
+		cerr << "Fork failed. Program exited." << endl;
+		exit(1);
+	}
+
+	if (!pid){
+		sprintf(str, "Read changes. Now we have %d people in this room.\n", counter);
+		execl("/usr/bin/espeak", "/usr/bin/espeak", str);
+	}
+	else{
+		if (waitpid(pid, &pid_status, 0) == -1)
+			exit(1);
+		return;
+	}
+}
 
 int main(int argc, char** argv) {
 	// Check for valid command line arguments, print usage
@@ -22,6 +49,7 @@ int main(int argc, char** argv) {
 	// These vectors hold the images and corresponding labels:
 	vector<Mat> images;
 	vector<int> labels;
+	int people_count = 0;
 	
 	CascadeClassifier haar_cascade;
 	haar_cascade.load(fn_haar);
@@ -61,6 +89,11 @@ int main(int argc, char** argv) {
 		// Show the result:
 		namedWindow("face_recognizer", WINDOW_AUTOSIZE);
 		imshow("face_recognizer", original);
+
+		if (people_count != faces.size()){
+			people_count = faces.size();
+			tell_num_of_people(people_count);
+		}
 		// And display it:
 		char key = (char) waitKey(20);
 		// Exit this loop on escape:
