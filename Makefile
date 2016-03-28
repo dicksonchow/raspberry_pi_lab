@@ -6,7 +6,7 @@ CC	= gcc
 PP	= g++
 WILDFLAGS	= -L/usr/local/bin
 WILDLIBS	= -lwiringPi -lwiringPiDev
-CVLDLIBS	= -I/usr/include/opencv -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_nonfree -lopencv_objdetect -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab -ltbb -lGL -lGLU -lrt -lpthread -lm -ldl
+CVLDLIBS	= -I/usr/include/opencv -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_objdetect -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab -lpthread -lm -ldl
 
 SRC	= lab_2/get_temperature.c
 OBJ	= $(SRC:.c=.o)

@@ -55,12 +55,18 @@ void tell_tempture(float temp, float rh)
 	}
 }
 
-int main (void)
+int main (int argc, char** argv)
 {
-	int temp, rh;
-	int newTemp, newRh;
+	int temp, rh, newTemp, newRh, threshold;
 
 	temp = rh = newTemp = newRh = 0 ;
+
+	if (argc != 2){
+		fprintf(stderr, "Usage: %s [temp]\n", argv[0]);
+		exit(1);
+	}
+
+	threshold = atoi(argv[1]);
 
 	if (catch_signal(SIGINT, cleanup) == -1){
                 fprintf(stderr, "Failed to map the handler");
@@ -76,11 +82,12 @@ int main (void)
 
 	for (;;)
 	{
-		delay (100);
+		delay (500);
 		
 		if (!readRHT03 (RHT03_PIN, &newTemp, &newRh))
 			continue;
 
+		printf("The temperature is %5.1f. The relative humidity is %5.1f%%.\n", temp / 10.0, rh / 10.0);
 		if ((temp != newTemp) || (rh != newRh)){
 			temp = newTemp;
 			rh   = newRh;
@@ -90,8 +97,9 @@ int main (void)
 				temp = -temp ;
 			}
 
-			if (temp / 10.0 > 18)
+			if (temp / 10.0 > threshold)
 				tell_tempture(temp, rh);
+			
 		}
 	}
 
