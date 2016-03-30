@@ -28,7 +28,7 @@ int catch_signal(int sig, void (*handler)(int))
 
 int main (int argc, char** argv)
 {
-	double threshold;
+	double threshold = 0;
 	int temp, rh; 
 
 	temp = rh = threshold = 250 ;

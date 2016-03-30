@@ -57,20 +57,24 @@ void tell_tempture(float temp, float rh)
 
 int main (int argc, char** argv)
 {
-	int temp, rh, newTemp, newRh, threshold;
+	double threshold = 0;
+	int temp, rh, newTemp, newRh;
 
 	temp = rh = newTemp = newRh = 0 ;
 
 	if (argc != 2){
-		fprintf(stderr, "Usage: %s [temp]\n", argv[0]);
-		exit(1);
+		fprintf(stderr, "Usage: sudo %s [temperature]\n", argv[0]);
+		fprintf(stderr, "\t[temperature] - threshold temperature to turn on the fan and the lightblub\n");
+		fprintf(stderr, "\nExample: sudo %s 18\n", argv[0]);
+		fprintf(stderr, "This program will take the first command line argument as a threshold temperature, 18 degree Celsius in the above example.\nWhenever the room temperature is higher than the threshold temperature you supplied to the program, the speaker will start talking and the light blub will light up as well.\nHave Fun!\n");
+		return 1;
 	}
 
 	threshold = atoi(argv[1]);
 
 	if (catch_signal(SIGINT, cleanup) == -1){
                 fprintf(stderr, "Failed to map the handler");
-                exit(2);
+                return 1;
         }
 
 	if (wiringPiSetup() == -1){
@@ -78,6 +82,8 @@ int main (int argc, char** argv)
                 return -1;
         }
 
+	threshold = atof(argv[1]);
+	printf("Threshold temperature: %5.1f degree\n", threshold);
 	piHiPri(55);
 
 	for (;;)
