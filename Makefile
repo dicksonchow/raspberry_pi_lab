@@ -19,3 +19,7 @@ lab1: lab_1/face_counter.o
 lab2: lab_2/get_temperature.o
 	$Q $(CC) -o $@ lab_2/get_temperature.o $(WILDFLAGS) $(WILDLIBS)
 	rm -f lab_2/get_temperature.o
+
+lab4: lab_4/smart_fan.o
+	$Q $(CC) -o $@ lab_4/smart_fan.o $(WILDFLAGS) $(WILDLIBS)
+	rm -f lab_4/smart_fan.o
